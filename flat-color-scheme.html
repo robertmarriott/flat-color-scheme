@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	td {
+		color: #fff;
+		cursor: pointer;
+		height: 100px;
+		text-align: center;
+		width: auto;
+	}
+
+	#status {
+		font-size: 36px;
+		font-weight: bold;
+		display: none;
+	}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script>
+	$(document).ready(function () {
+		"use strict";
+
+		function copyToClipboard(target) {
+			var selection = window.getSelection();	// Save the selection.
+			var range = document.createRange();
+
+			range.selectNodeContents(target);
+			selection.removeAllRanges();			// Remove all ranges from the selection.
+			selection.addRange(range);				// Add the new range.
+
+			try {
+				document.execCommand("copy");
+				updateStatus();
+			} catch (e) {
+				alert("Unable to copy to clipboard.");
+			}
+
+			window.getSelection().removeAllRanges();
+		}
+
+		function updateStatus() {
+			$("#status").fadeIn("fast", function () { $(this).delay(100).fadeOut("slow"); });
+		}
+
+		$("td").click(function () {
+			copyToClipboard(this);
+		});
+
+		$("#include-prefix").click(function () {
+			var $includePrefix = $(this);
+
+			$("td").each(function () {
+				var $td = $(this);
+				$td.html( ($includePrefix.is(":checked") ? "#" : "") + $td.html().replace("#", "") );
+			});
+		});
+
+		//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
+		function replacer(match, p1, p2, p3, offset, string) {
+			return p1;
+		}
+
+		$("#include-suffix").click(function () {
+			var $includeSuffix = $(this);
+
+			$("td").each(function () {
+				var $td = $(this);
+				$td.html( $td.html().replace(/^([\#a-f\d]{6,7})f{2,2}$/i, replacer) + ($includeSuffix.is(":checked") ? "ff" : "") );
+			});
+		});
+	});
+	</script>
+</head>
+<body>
+	<p><label for="include-prefix">#<input type="checkbox" id="include-prefix"></label>&nbsp;<label for="include-suffix"><input type="checkbox" id="include-suffix">ff</label></p>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td bgcolor="#1abc9c">1abc9c</td>
+			<td bgcolor="#2ecc71">2ecc71</td>
+			<td bgcolor="#3498db">3498db</td>
+			<td bgcolor="#9b59b6">9b59b6</td>
+			<td bgcolor="#34495e">34495e</td>
+		</tr>
+		<tr>
+			<td bgcolor="#16a085">16a085</td>
+			<td bgcolor="#27ae60">27ae60</td>
+			<td bgcolor="#2980b9">2980b9</td>
+			<td bgcolor="#8e44ad">8e44ad</td>
+			<td bgcolor="#2c3e50">2c3e50</td>
+		</tr>
+		<tr>
+			<td bgcolor="#f1c40f">f1c40f</td>
+			<td bgcolor="#e67e22">e67e22</td>
+			<td bgcolor="#e74c3c">e74c3c</td>
+			<td bgcolor="#ecf0f1">ecf0f1</td>
+			<td bgcolor="#95a5a6">95a5a6</td>
+		</tr>
+		<tr>
+			<td bgcolor="#f39c12">f39c12</td>
+			<td bgcolor="#d35400">d35400</td>
+			<td bgcolor="#c0392b">c0392b</td>
+			<td bgcolor="#bdc3c7">bdc3c7</td>
+			<td bgcolor="#7f8c8d">7f8c8d</td>
+		</tr>
+	</table>
+	<br>
+	<p id="status">Copied to clipboard!</p>
+</body>
+</html>
